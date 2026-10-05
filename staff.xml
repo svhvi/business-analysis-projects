@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<staff>
+  <department>
+    <name>Кафедра обліку та фінансів</name>
+    <teachers>
+      <teacher>Немає результатів пошуку</teacher>
+      <teacher>Документи та матеріали</teacher>
+      <teacher>Основні досягнення студентів</teacher>
+      <teacher>Випускники кафедри</teacher>
+      <teacher>АКАДЕМІЧНА ДОБРОЧЕСНІСТЬ</teacher>
+      <teacher>доктор філософії (PhD)</teacher>
+      <teacher>Доктор філософії (PhD)</teacher>
+      <teacher>Організовано й проведено</teacher>
+    </teachers>
+  </department>
+  <department>
+    <name>Кафедра математики та інформатики</name>
+    <teachers>
+      <teacher>Немає результатів пошуку</teacher>
+      <teacher>АКАДЕМІЧНА ДОБРОЧЕСНІСТЬ</teacher>
+      <teacher>доктор філософії</teacher>
+    </teachers>
+  </department>
+</staff>

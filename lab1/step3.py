@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # завантажуємо сторінку
-url = "https://kme.org.ua/uk/kafedry/"
+url = "https://kme.org.ua/uk/strukturni-pidrozdily/kafedri/"
 page = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
 soup = BeautifulSoup(page.text, "html.parser")
 
