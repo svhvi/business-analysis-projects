@@ -7,6 +7,8 @@ URL = "https://www.scrapethissite.com/pages/ajax-javascript/"
 
 def scrape_movies():
     results = []
+    
+    years_to_scrape = [2015, 2014, 2013, 2012, 2011, 2010]
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -14,55 +16,59 @@ def scrape_movies():
 
         page.goto(URL)
 
-        # Знаходимо елемент безпечним селектором за атрибутом id
-        year_btn = page.wait_for_selector('[id="2015"]')
-        year_btn.click()
+        # Цикл проходить по кожному року
+        for year in years_to_scrape:
+            print(f"Збираємо дані за {year} рік...")
 
-        # Очікуємо появи рядків таблиці з даними
-        page.wait_for_selector("table.table tbody tr.film")
-        page.wait_for_load_state("networkidle")
+            year_btn = page.wait_for_selector(f'[id="{year}"]')
+            year_btn.click()
 
-        # Збираємо дані
-        rows = page.query_selector_all("table.table tbody tr.film")
+            page.wait_for_selector("table.table tbody tr.film")
+            page.wait_for_load_state("networkidle")
 
-        for row in rows:
-            title_elem = row.query_selector(".film-title")
-            nominations_elem = row.query_selector(".film-nominations")
-            awards_elem = row.query_selector(".film-awards")
-            best_picture_elem = row.query_selector(".film-best-picture")
+            rows = page.query_selector_all("table.table tbody tr.film")
 
-            title = title_elem.inner_text().strip() if title_elem else ""
-            nominations = (
-                nominations_elem.inner_text().strip() if nominations_elem else "0"
-            )
-            awards = awards_elem.inner_text().strip() if awards_elem else "0"
-            is_best_picture = bool(best_picture_elem)
+            for row in rows:
+                title_elem = row.query_selector(".film-title")
+                nominations_elem = row.query_selector(".film-nominations")
+                awards_elem = row.query_selector(".film-awards")
+                best_picture_elem = row.query_selector(".film-best-picture")
 
-            results.append(
-                {
-                    "year": 2015,
-                    "title": title,
-                    "nominations": nominations,
-                    "awards": awards,
-                    "best_picture": is_best_picture,
-                }
-            )
+                title = title_elem.inner_text().strip() if title_elem else ""
+                nominations = (
+                    nominations_elem.inner_text().strip() if nominations_elem else "0"
+                )
+                awards = awards_elem.inner_text().strip() if awards_elem else "0"
+                
+                # Перевірка найкращого фільму через іконку (щоб не було всюди True)
+                icon_elem = best_picture_elem.query_selector("i") if best_picture_elem else None
+                is_best_picture = bool(icon_elem)
+
+                # Додаємо фільми поточного року до загального накопичувального списку
+                results.append(
+                    {
+                        "year": year,
+                        "title": title,
+                        "nominations": nominations,
+                        "awards": awards,
+                        "best_picture": is_best_picture,
+                    }
+                )
 
         browser.close()
 
-    # Збереження у JSON
-    with open("oscar_data.json", "w", encoding="utf-8") as f:
+    # ЗБЕРЕЖЕННЯ ВИДЕНЕ ЗА МЕЖІ ЦИКЛУ (тепер запишеться все разом)
+    with open("oscar_data_all_years.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
 
-    # Збереження у CSV
-    with open("oscar_data.csv", "w", newline="", encoding="utf-8") as f:
+    with open("oscar_data_all_years.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f, fieldnames=["year", "title", "nominations", "awards", "best_picture"]
         )
         writer.writeheader()
         writer.writerows(results)
 
-    print(f"Збір успішно завершено! Записано {len(results)} фільмів.")
+    print(f"Збір успішно завершено! Записано загалом {len(results)} фільмів за всі роки.")
 
 
 if __name__ == "__main__":
