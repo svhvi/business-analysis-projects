@@ -14,15 +14,15 @@ def scrape_movies():
 
         page.goto(URL)
 
-        # 1. Знаходимо елемент безпечним селектором за атрибутом id
+        # Знаходимо елемент безпечним селектором за атрибутом id
         year_btn = page.wait_for_selector('[id="2015"]')
         year_btn.click()
 
-        # 2. Очікуємо появи рядків таблиці з даними
+        # Очікуємо появи рядків таблиці з даними
         page.wait_for_selector("table.table tbody tr.film")
         page.wait_for_load_state("networkidle")
 
-        # 3. Збираємо дані
+        # Збираємо дані
         rows = page.query_selector_all("table.table tbody tr.film")
 
         for row in rows:
@@ -36,7 +36,7 @@ def scrape_movies():
                 nominations_elem.inner_text().strip() if nominations_elem else "0"
             )
             awards = awards_elem.inner_text().strip() if awards_elem else "0"
-            is_best_picture = bool(best_picture_elem)
+            is_best_picture = bool(best_picture_elem and best_picture_elem.inner_text().strip())
 
             results.append(
                 {
@@ -50,11 +50,11 @@ def scrape_movies():
 
         browser.close()
 
-    # 4. Збереження у JSON
+    # Збереження у JSON
     with open("oscar_data.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
 
-    # 5. Збереження у CSV
+    # Збереження у CSV
     with open("oscar_data.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f, fieldnames=["year", "title", "nominations", "awards", "best_picture"]
