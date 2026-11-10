@@ -86,4 +86,4 @@ with open('microwaves.json', 'w', encoding='utf-8') as f:
 print(
     f'Готово! Успішно зібрано та збережено {len(all_data)} записів у файл'
     ' microwaves.json'
-)
+) 
